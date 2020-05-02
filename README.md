@@ -18,6 +18,16 @@ After installing dependencies
 
 For Dev ENV
 
+To be able to run backend only:
+
+```bash
+npm run server # on the source folder
+
+```
+
+
+To be able to Run both backend and frontend:
+
 ```bash
 npm run dev # on the source folder, this will trigger both the backend and the client
 
