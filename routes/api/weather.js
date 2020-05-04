@@ -1,38 +1,49 @@
 const express = require("express");
 const router = express.Router();
-const url = require("url");
-const axios = require("axios");
+const fs = require("fs");
 const config = require("config");
-const apiToken = config.get("RAPID_API_KEY");
+const apiUrl = config.get("RAPID_API_URL.currentWeather");
+const cacheFile = config.get("cache.file");
+const weatherService = require("../../services/weather.service");
+const mapboxService = require("../../services/mapbox.service");
 
 // @route GET api/weather
 // @desc Get actual weather
 // @access Public
-router.get("/", (req, res) => {
-  const queryObject = url.parse(req.url, true).query;
-  const { city, lat = "", lon = "" } = queryObject;
+router.get("/:lat/:lon", async (req, res) => {
+  //TODO add city name
+  let { lat, lon } = req.params;
+  const place = await mapboxService.getCity(lat, lon);
+  let rawdata = fs.readFileSync(config.cache.file);
+  let weatherResult =
+    Object.keys(rawdata).length !== 0 ? JSON.parse(rawdata) : [];
 
-  axios({
-    method: "GET",
-    url: "https://community-open-weather-map.p.rapidapi.com/weather",
-    headers: {
-      "content-type": "application/octet-stream",
-      "x-rapidapi-host": "community-open-weather-map.p.rapidapi.com",
-      "x-rapidapi-key": apiToken,
-    },
-    params: {
-      q: city,
-      lat,
-      lon,
-    },
-  })
-    .then(async (result) => {
-      res.send(result.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  //res.send("ss");
+  const onCache = weatherResult.find((o) => {
+    return (
+      o.coord.lon == parseFloat(lon).toFixed(2) &&
+      o.coord.lat == parseFloat(lat).toFixed(2)
+    );
+  });
+
+  if (!onCache) {
+    const weatherParams = {
+      ...req.params,
+      apiUrl,
+    };
+    weatherService
+      .getWeather(weatherParams)
+      .then((result) => {
+        weatherResult.push({ ...result, place });
+        fs.writeFileSync(cacheFile, JSON.stringify(weatherResult));
+        return res.send({ ...result, place });
+      })
+      .catch((err) => {
+        res.status(500).send(err);
+      });
+  } else {
+    console.log("desde cache..");
+    return res.send(onCache);
+  }
 });
 
 module.exports = router;
