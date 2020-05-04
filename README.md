@@ -2,7 +2,7 @@
 
 ## Instalation Requirements
 
-- Nodejs 8 or more
+- Nodejs 10 or more
 
 ## Instalation
 
@@ -23,6 +23,12 @@ Also please npm install on the /client folder
 cd /weatherapp/client
 npm install
 ```
+
+### 1.1 Prerequisites
+
+You need to have a account of mapbox and rapid api, please do this to access your tokens to test the app
+To get a token for the api go to this link https://rapidapi.com/community/api/open-weather-map
+To get a token for the mapbox api go to this link https://www.mapbox.com/
 
 ### 2. Config variables
 
