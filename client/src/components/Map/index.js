@@ -21,6 +21,10 @@ const ErrorMessage = styled.span`
 `;
 
 const MapContent = () => {
+  const defaultPoint = {
+    lat: -16.503399,
+    lon: -68.131649,
+  };
   let fCast = useRef();
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState(false);
@@ -31,8 +35,8 @@ const MapContent = () => {
   const [isLoadingF, setIsLoadingF] = useState(true);
   const [forecast, setForecast] = useState(false);
   const [selected, setSelected] = useState({
-    lat: -16.503399,
-    lon: -68.131649,
+    lat: defaultPoint.lat,
+    lon: defaultPoint.lon,
     clicked: true,
   });
   useEffect(() => {
@@ -75,7 +79,11 @@ const MapContent = () => {
   return (
     <>
       <MapContainer>
-        <MapComponent setSelected={setSelected} setForecast={setForecast} />
+        <MapComponent
+          setSelected={setSelected}
+          setForecast={setForecast}
+          defaultPoint={defaultPoint}
+        />
         {error ? (
           <ErrorMessage className="label label-error">
             Something went wrong!, maybe you forgot to place you API Key on

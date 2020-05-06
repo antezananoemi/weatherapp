@@ -9,17 +9,17 @@ const Container = styled.div`
   margin-right: 15%;
 `;
 
-const MapComponent = ({ setSelected, setForecast }) => {
+const MapComponent = ({ setSelected, setForecast, defaultPoint }) => {
   const [viewport, setViewport] = useState({
     width: "70vw",
     height: "65vh",
-    latitude: -16.503399,
-    longitude: -68.131649,
+    latitude: defaultPoint.lat,
+    longitude: defaultPoint.lon,
     zoom: 3,
   });
   const [marker, setMarker] = useState({
-    latitude: -16.503399,
-    longitude: -68.131649,
+    latitude: defaultPoint.lat,
+    longitude: defaultPoint.lon,
   });
   let mapRef = useRef();
 
