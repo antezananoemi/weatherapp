@@ -8,6 +8,11 @@ const weatherService = require("../../services/weather.service");
 const mapboxService = require("../../services/mapbox.service");
 const latlon = require("../../util/latlon");
 
+const getCache = () => {
+  let rawdata = fs.readFileSync(config.cache.file);
+  return Object.keys(rawdata).length !== 0 ? JSON.parse(rawdata) : [];
+};
+
 // @route GET api/weather
 // @desc Get actual weather
 // @access Public
@@ -18,32 +23,27 @@ router.get("/:lat/:lon", async (req, res) => {
       err: "Please provide correct values for latitude and longitude",
     });
   } else {
-    let rawdata = fs.readFileSync(config.cache.file);
-    let weatherResult =
-      Object.keys(rawdata).length !== 0 ? JSON.parse(rawdata) : [];
-    const onCache = weatherResult.find((o) => {
-      return (
+    let weatherResult = getCache();
+    const onCache = weatherResult.find(
+      (o) =>
         o.coord.lon == parseFloat(lon).toFixed(2) &&
         o.coord.lat == parseFloat(lat).toFixed(2)
-      );
-    });
+    );
 
     if (!onCache) {
-      const place = await mapboxService.getCity(lat, lon);
       const weatherParams = {
         ...req.params,
         apiUrl,
       };
-      weatherService
-        .getWeather(weatherParams)
-        .then((result) => {
-          weatherResult.push({ ...result, place });
-          fs.writeFileSync(cacheFile, JSON.stringify(weatherResult));
-          return res.send({ ...result, place });
-        })
-        .catch((err) => {
-          res.status(500).send(err);
-        });
+      try {
+        const place = await mapboxService.getCity(lat, lon);
+        const weather = await weatherService.getWeather(weatherParams);
+        weatherResult.push({ ...weather, place });
+        fs.writeFileSync(cacheFile, JSON.stringify(weatherResult));
+        return res.send({ ...weather, place });
+      } catch (error) {
+        res.status(400).send({ error: String(error) });
+      }
     } else {
       console.log("desde cache..");
       return res.send(onCache);

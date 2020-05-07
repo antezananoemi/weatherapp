@@ -4,9 +4,9 @@ const apiToken = config.get("RAPID_API_KEY");
 
 const wheater = {};
 
-wheater.getWeather = ({ city, lat, lon, apiUrl }) => {
-  return new Promise((resolve, reject) => {
-    axios({
+wheater.getWeather = async ({ city, lat, lon, apiUrl }) => {
+  try {
+    const response = await axios({
       method: "GET",
       url: apiUrl,
       headers: {
@@ -20,15 +20,11 @@ wheater.getWeather = ({ city, lat, lon, apiUrl }) => {
         lon: city ? "" : lon,
         units: "metric",
       },
-    })
-      .then((res) => {
-        return resolve(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        return reject(err);
-      });
-  });
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
 };
 
 module.exports = wheater;
