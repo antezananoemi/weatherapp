@@ -20,7 +20,7 @@ router.get("/:lat/:lon", async (req, res) => {
   let { lat, lon } = req.params;
   if (!latlon.checkLatLon(lat, lon)) {
     res.status(422).send({
-      err: "Please provide correct values for latitude and longitude",
+      error: "Please provide correct values for latitude and longitude",
     });
   } else {
     let weatherResult = getCache();
@@ -42,7 +42,7 @@ router.get("/:lat/:lon", async (req, res) => {
         fs.writeFileSync(cacheFile, JSON.stringify(weatherResult));
         return res.send({ ...weather, place });
       } catch (error) {
-        res.status(400).send({ error: String(error) });
+        res.status(error.code).send({ error: error.message });
       }
     } else {
       console.log("desde cache..");

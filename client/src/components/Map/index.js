@@ -86,8 +86,7 @@ const MapContent = () => {
         />
         {error ? (
           <ErrorMessage className="label label-error">
-            Something went wrong!, maybe you forgot to place you API Key on
-            local variables or you API access expired or reached the max limit
+            Something went wrong!
           </ErrorMessage>
         ) : (
           <CurrentWeather

@@ -14,8 +14,6 @@ app.use("/api/forecast", require("./routes/api/forecast"));
 
 const PORT = process.env.PORT || 5000;
 
-//app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
 return Promise.all([cron()]).then(() => {
   const env = process.env.NODE_ENV || "development";
 

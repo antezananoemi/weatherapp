@@ -1,6 +1,7 @@
 const axios = require("axios");
 const config = require("config");
 const mapboxToken = config.get("MAPBOX_TOKEN");
+const { ApiError } = require("../util/error");
 
 const mapService = {};
 
@@ -14,7 +15,11 @@ mapService.getCity = async (lat, lon) => {
     });
     return place;
   } catch (error) {
-    throw new Error(error.response.data.message);
+    throw new ApiError(
+      error.response.status ? error.response.status : "404",
+      "api error",
+      error.response.data.message
+    );
   }
 };
 

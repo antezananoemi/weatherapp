@@ -1,6 +1,7 @@
 const axios = require("axios");
 const config = require("config");
 const apiToken = config.get("RAPID_API_KEY");
+const { ApiError } = require("../util/error");
 
 const wheater = {};
 
@@ -23,7 +24,11 @@ wheater.getWeather = async ({ city, lat, lon, apiUrl }) => {
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message);
+    throw new ApiError(
+      error.response.status ? error.response.status : error.response.data.cod,
+      "api error",
+      error.response.data.message
+    );
   }
 };
 

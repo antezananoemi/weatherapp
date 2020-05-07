@@ -78,12 +78,11 @@ npm run dev # on the source folder, this will trigger both the backend and the c
 
 ```
 
-For Production
+To execute test
 
-To mock a production server, you can follow the next steps:
+to execute test, on source folder npm run test
 
 ```bash
-npm install -g serve
-serve -l 3000 -s build # to serve the frontend on the /client folder
-npm run server # to serve the backend in the source folder /
+cd /weatherapp
+npm run test # to test the backend in the source folder /
 ```
