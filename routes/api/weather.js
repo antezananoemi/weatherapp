@@ -6,18 +6,14 @@ const apiUrl = config.get("RAPID_API_URL.currentWeather");
 const cacheFile = config.get("cache.file");
 const weatherService = require("../../services/weather.service");
 const mapboxService = require("../../services/mapbox.service");
-
-const checkLatLon = (lat, lon) => {
-  const regex = /^(\-?([0-8]?[0-9](\.\d+)?|90(.[0]+)?)\s?[,]\s?)+(\-?([1]?[0-7]?[0-9](\.\d+)?|180((.[0]+)?)))$/;
-  return regex.test(`${lat},${lon}`);
-};
+const latlon = require("../../util/latlon");
 
 // @route GET api/weather
 // @desc Get actual weather
 // @access Public
 router.get("/:lat/:lon", async (req, res) => {
   let { lat, lon } = req.params;
-  if (!checkLatLon(lat, lon)) {
+  if (!latlon.checkLatLon(lat, lon)) {
     res.status(422).send({
       err: "Please provide correct values for latitude and longitude",
     });
